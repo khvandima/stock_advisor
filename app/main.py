@@ -1,8 +1,12 @@
 from fastapi import FastAPI
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from app.api.routes import auth
+from app.api.routes import portfolio
 
 from app.logger import logger
 
@@ -22,7 +26,15 @@ app = FastAPI(
 )
 
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error: {exc}")
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
+
 app.include_router(auth.router)
+app.include_router(portfolio.router)
+
 
 
 @app.get("/health")

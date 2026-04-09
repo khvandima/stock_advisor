@@ -1,5 +1,4 @@
-from fastapi import HTTPException, status, Depends
-from fastapi import APIRouter
+from fastapi import HTTPException, APIRouter, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy import select
@@ -30,10 +29,15 @@ async def register_user(user_data: UserCreate, db: AsyncSession = Depends(get_db
         hashed_password=hash_password(user_data.password),
     )
 
-    db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
-    logger.info(f"New user registered: {new_user.email}")
+    try:
+        db.add(new_user)
+        await db.commit()
+        await db.refresh(new_user)
+        logger.info(f"New user registered: {new_user.email}")
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"Database error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
     return UserResponse.model_validate(new_user)
 
