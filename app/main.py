@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
 
+from app.api.routes import auth
+
 from app.logger import logger
 
 
@@ -18,6 +20,9 @@ app = FastAPI(
     description="AI assistant for Korean stock market KOSPI/KOSDAQ",
     lifespan=lifespan
 )
+
+
+app.include_router(auth.router)
 
 
 @app.get("/health")
