@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 
 from app.api.routes import auth
 from app.api.routes import portfolio
+from app.api.routes import stocks
 
 from app.logger import logger
 
@@ -34,6 +35,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 app.include_router(auth.router)
 app.include_router(portfolio.router)
+app.include_router(stocks.router)
 
 
 
