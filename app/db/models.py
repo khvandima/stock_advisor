@@ -54,7 +54,7 @@ class Alert(TimestampMixin, Base):
     ticker: Mapped[str] = mapped_column(String(20))
     threshold: Mapped[float] = mapped_column(Float, unique=False)
     condition: Mapped[str] = mapped_column(String(255), unique=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, unique=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     # Relationship
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))

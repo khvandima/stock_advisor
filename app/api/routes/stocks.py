@@ -10,7 +10,6 @@ from app.schemas.stock import StockPriceResponse, StockHistoryItem, SignalRespon
 
 from app.logger import logger
 
-
 router = APIRouter(prefix="/stocks", tags=["stocks"])
 
 

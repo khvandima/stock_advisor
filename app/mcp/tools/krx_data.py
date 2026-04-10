@@ -1,5 +1,4 @@
 from pykrx import stock
-import pandas as pd
 from datetime import datetime, timedelta
 from app.logger import logger
 
