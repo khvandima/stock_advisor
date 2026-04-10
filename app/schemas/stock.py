@@ -23,3 +23,13 @@ class StockHistoryItem(BaseModel):
     volume: float
     change_rate: float
     date: str
+
+
+class SignalResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    ticker: str
+    signal: str
+    rsi: float
+    macd: float
+    ma20: float
+    ma50: float
