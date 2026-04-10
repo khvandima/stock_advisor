@@ -4,12 +4,13 @@ from app.db.models import User
 from app.core.dependencies import get_current_user
 from app.logger import logger
 from app.mcp.tools.krx_data import get_stock_price, get_stock_history
+from app.schemas.stock import StockPriceResponse, StockHistoryItem
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])
 
 
 @router.get('/{ticker}')
-async def stock_price(ticker: str, current_user: User = Depends(get_current_user)):
+async def stock_price(ticker: str, current_user: User = Depends(get_current_user)) -> StockPriceResponse:
     try:
         result =  get_stock_price(ticker)
         return result
@@ -19,7 +20,7 @@ async def stock_price(ticker: str, current_user: User = Depends(get_current_user
 
 
 @router.get('/{ticker}/history')
-async def stock_history(ticker: str, days: int = 30, current_user: User = Depends(get_current_user)):
+async def stock_history(ticker: str, days: int = 30, current_user: User = Depends(get_current_user)) -> list[StockHistoryItem]:
     try:
         result = get_stock_history(ticker, days=days)
         return result
