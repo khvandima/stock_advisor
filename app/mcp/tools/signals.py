@@ -14,6 +14,7 @@ def get_signal(ticker: str):
     Args:
     ticker: Korean stock ticker (e.g. '005930' for Samsung Electronics)
     """
+    logger.info(f"get_signal called: ticker={ticker}")
     try:
         df = pd.DataFrame(get_stock_history(ticker, days=90))
 
@@ -62,7 +63,7 @@ def get_signal(ticker: str):
             'ma20': ma20,
             'ma50': ma50,
         }
-
+        logger.info(f"get_signal result: {result}")
         return result
     except Exception as e:
         logger.error(f"Failed to calculate signal for {ticker}: {e}")

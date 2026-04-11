@@ -2,7 +2,7 @@ from mcp.server.fastmcp import FastMCP
 
 from app.mcp.tools.krx_data import get_stock_price, get_stock_history
 from app.mcp.tools.signals import get_signal
-from app.mcp.tools.dart import get_dart_disclosures
+from app.mcp.tools.dart import get_dart_disclosures, get_financial_statements
 from app.mcp.tools.tavily_news import tavily_search
 
 import sys
@@ -21,6 +21,7 @@ mcp.add_tool(get_stock_price)
 mcp.add_tool(get_stock_history)
 mcp.add_tool(get_signal)
 mcp.add_tool(get_dart_disclosures)
+mcp.add_tool(get_financial_statements)
 mcp.add_tool(tavily_search)
 
 

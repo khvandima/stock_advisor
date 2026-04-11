@@ -10,6 +10,7 @@ def get_stock_price(ticker: str) -> dict:
     along with the company name.
     Use this when the user asks about the current price of a specific stock.
     """
+    logger.info(f"get_stock_price called: ticker={ticker}")
     try:
         today = datetime.today().strftime("%Y%m%d")
         week_ago = (datetime.today() - timedelta(days=7)).strftime("%Y%m%d")
@@ -26,6 +27,7 @@ def get_stock_price(ticker: str) -> dict:
         result = df.iloc[-1].to_dict()
         result["name"] = name
         result["ticker"] = ticker
+        logger.info(f"get_stock_price result: {result}")
         return result
     except Exception as e:
         logger.error(f"Failed to get stock price for {ticker}: {e}")
@@ -43,6 +45,7 @@ def get_stock_history(ticker: str, days: int = 30) -> list[dict]:
           90 for medium-term, 180 for long-term trend analysis.
           Choose based on user's question context.
     """
+    logger.info(f"get_stock_history called: ticker={ticker}, days={days}")
     try:
         today = datetime.today().strftime("%Y%m%d")
         from_date = (datetime.today() - timedelta(days=days)).strftime("%Y%m%d")
@@ -57,6 +60,7 @@ def get_stock_history(ticker: str, days: int = 30) -> list[dict]:
         })
         df["ticker"] = ticker
         df["date"] = df.index.strftime("%Y-%m-%d")
+        logger.info(f"get_stock_history result: {len(df)} records")
         return df.reset_index(drop=True).to_dict(orient="records")
     except Exception as e:
         logger.error(f"Failed to get stock history for {ticker}: {e}")
