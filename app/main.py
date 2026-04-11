@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import JSONResponse
-
+import asyncio
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
 
@@ -30,6 +30,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         }
     }
     async with MultiServerMCPClient(mcp_config) as client:
+        await asyncio.sleep(1)
         tools = client.get_tools()
         logger.info(f"Tool names: {[t.name for t in tools]}")
         async with AsyncPostgresSaver.from_conn_string(
