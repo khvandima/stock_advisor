@@ -137,7 +137,7 @@ def get_financial_statements(ticker: str, year: str = None) -> list[dict]:
     """
     logger.info(f"get_financial_statements called: ticker={ticker}, year={year}")
     if not year:
-        year = str(datetime.today().year)
+        year = str(datetime.today().year -1)
     corp_code = get_corp_code(ticker)
     try:
         with httpx.Client() as client:
