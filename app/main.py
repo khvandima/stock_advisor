@@ -23,14 +23,20 @@ from app.logger import logger
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting lifespan")
+    # mcp_config = {
+    #     "stock-advisor": {
+    #         "url": settings.MCP_SERVER_URL,
+    #         "transport": "sse",
+    #     }
+    # }
     mcp_config = {
         "stock-advisor": {
-            "url": settings.MCP_SERVER_URL,
-            "transport": "sse",
+            "command": "python",
+            "args": ["-m", "app.mcp.server"],
+            "transport": "stdio",
         }
     }
     async with MultiServerMCPClient(mcp_config) as client:
-        await asyncio.sleep(1)
         tools = client.get_tools()
         logger.info(f"Tool names: {[t.name for t in tools]}")
         async with AsyncPostgresSaver.from_conn_string(
