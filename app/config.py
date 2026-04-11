@@ -14,27 +14,19 @@ class Settings(BaseSettings):
     TAVILY_API_KEY: str
     DART_API_KEY: str  # DART Open API key for Korean corporate disclosures (dart.fss.or.kr)
 
+    # LLM settings
+    LLM_TEMPERATURE: float = 0.1
+    LLM_MAX_TOKENS: int = 1000
+
     # База данных
     DATABASE_URL: str
     TEST_DATABASE_URL: str
-    # QDRANT_HOST: str
-    # QDRANT_PORT: int = 6333
-    # QDRANT_API_KEY: str = ""
-    # QDRANT_COLLECTION_NAME: str = "stock_advisor"
 
     # App / JWT
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     ALGORITHM: str = "HS256"
     APP_ENV: Literal["development", "production", "test"] = "development"  # Application environment
-
-    # RAG parametrs
-    # EMBEDDING_MODEL: str = 'intfloat/multilingual-e5-large'
-    # CHUNK_SIZE: int = 500
-    # CHUNK_OVERLAP: int = 100
-    # VECTOR_SIZE: int = 1024
-    # RERANK_MODEL: str = 'cross-encoder/ms-marco-MiniLM-L-6-v2'
-    # TOP_K: int = 5
 
     # LLM
     LLM_MODEL: str = 'llama-3.3-70b-versatile'

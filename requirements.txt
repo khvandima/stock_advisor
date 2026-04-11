@@ -4,10 +4,11 @@ uvicorn[standard]==0.30.6
 python-multipart==0.0.9
 
 # AI Agent
-langgraph==0.2.35
+langgraph==0.2.3
 langchain==0.3.1
 langchain-groq==0.2.0
 langchain-community==0.3.1
+langchain-mcp-adapters
 groq==0.11.0
 
 # MCP
@@ -24,13 +25,6 @@ langgraph-checkpoint-postgres==2.0.3
 
 # Vector DB — Qdrant
 qdrant-client==1.11.3
-
-# Embeddings
-# sentence-transformers==3.1.1
-# torch==2.4.1                    # CPU; замени на torch+cu118 если есть GPU
-
-# Reranking (cross-encoder)
-# используется sentence-transformers CrossEncoder — уже включён выше
 
 # Auth — JWT + bcrypt
 python-jose[cryptography]==3.3.0
@@ -57,9 +51,6 @@ python-dotenv==1.0.1
 
 # Logging
 loguru==0.7.2
-
-# RAGAS — RAG evaluation
-#ragas==0.2.1
 
 # Testing
 pytest==8.3.3

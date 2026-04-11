@@ -37,6 +37,11 @@ def get_stock_history(ticker: str, days: int = 30) -> list[dict]:
     Get historical OHLCV price data for a Korean stock by ticker.
     Returns a list of daily price records for the specified number of days.
     Use this when the user wants to see price trends or charts for a stock.
+    Args:
+    ticker: Korean stock ticker (e.g. '005930' for Samsung Electronics)
+    days: number of days to look back. Use 30 for short-term analysis,
+          90 for medium-term, 180 for long-term trend analysis.
+          Choose based on user's question context.
     """
     try:
         today = datetime.today().strftime("%Y%m%d")
