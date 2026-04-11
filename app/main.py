@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
 
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 
 from app.api.routes import auth
@@ -13,7 +14,6 @@ from app.api.routes import stocks
 from app.api.routes import alerts
 from app.api.routes import chat
 
-from app.agent.graph import get_mcp_tools
 from app.agent.graph import build_graph
 
 from app.config import settings
@@ -23,15 +23,23 @@ from app.logger import logger
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting lifespan")
-    tools, client = await get_mcp_tools()
-    async with AsyncPostgresSaver.from_conn_string(
-            settings.DATABASE_URL.replace("+asyncpg", "")
-    ) as checkpointer:
-        await checkpointer.setup()
-        graph = build_graph(tools, checkpointer=checkpointer)
-        app.state.graph = graph
-        app.state.mcp_client = client
-        yield
+    mcp_config = {
+        "stock-advisor": {
+            "url": settings.MCP_SERVER_URL,
+            "transport": "sse",
+        }
+    }
+    async with MultiServerMCPClient(mcp_config) as client:
+        tools = client.get_tools()
+        logger.info(f"Tool names: {[t.name for t in tools]}")
+        async with AsyncPostgresSaver.from_conn_string(
+                settings.DATABASE_URL.replace("+asyncpg", "")
+        ) as checkpointer:
+            await checkpointer.setup()
+            graph = build_graph(tools, checkpointer=checkpointer)
+            app.state.graph = graph
+            app.state.mcp_client = client
+            yield
     logger.info("Stopping lifespan")
 
 

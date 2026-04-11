@@ -20,24 +20,6 @@ llm = ChatGroq(
 )
 
 
-async def get_mcp_tools():
-    try:
-        mcp_config = {
-            "stock-advisor": {
-                "url": settings.MCP_SERVER_URL,
-                "transport": "sse",
-            }
-        }
-        client = MultiServerMCPClient(mcp_config)
-        tools = client.get_tools()
-        logger.info(f"Tool names: {[t.name for t in tools]}")
-        logger.info(f"Connected to MCP server, tools loaded: {len(tools)}")
-        return tools, client
-    except Exception as e:
-        logger.error(f"Failed to connect to MCP server: {e}")
-        raise
-
-
 def build_graph(tools: list, checkpointer=None):
     llm_with_tools = llm.bind_tools(tools)
     tool_node = ToolNode(tools)

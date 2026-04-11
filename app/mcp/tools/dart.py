@@ -6,7 +6,7 @@ from app.config import settings
 from app.logger import logger
 
 
-async def get_corp_code(ticker: str) -> str:
+def get_corp_code(ticker: str) -> str:
     """
     Get DART corporation code by stock ticker.
     DART uses its own corporation codes different from stock tickers.
@@ -15,13 +15,13 @@ async def get_corp_code(ticker: str) -> str:
         ticker: Korean stock ticker (e.g. '005930' for Samsung Electronics)
     """
     try:
-        async with httpx.AsyncClient() as client:
+        with httpx.Client() as client:
             params = {
                 'crtfc_key': settings.DART_API_KEY,
                 'stock_code': ticker
             }
 
-            response = await client.get('https://opendart.fss.or.kr/api/company.json', params=params)
+            response = client.get('https://opendart.fss.or.kr/api/company.json', params=params)
             data = response.json()
             if data.get('status') != '000':
                 raise ValueError(f"DART API error: {data.get('message')}")
@@ -32,7 +32,7 @@ async def get_corp_code(ticker: str) -> str:
         raise
 
 
-async def get_dart_disclosures(ticker: str, days: int = 30) -> list[dict]:
+def get_dart_disclosures(ticker: str, days: int = 30) -> list[dict]:
     """
     Get official corporate disclosures from DART (Korean financial disclosure system).
     Returns recent filings such as earnings reports, material facts, and regulatory announcements.
@@ -43,9 +43,9 @@ async def get_dart_disclosures(ticker: str, days: int = 30) -> list[dict]:
     """
     start_date = (datetime.today() - timedelta(days=days)).strftime("%Y%m%d")
     end_date = datetime.today().strftime("%Y%m%d")
-    corp_code = await get_corp_code(ticker)
+    corp_code = get_corp_code(ticker)
     try:
-        async with httpx.AsyncClient() as client:
+        with httpx.Client() as client:
             params = {
                 'crtfc_key': settings.DART_API_KEY,
                 'corp_code': corp_code,
@@ -53,7 +53,7 @@ async def get_dart_disclosures(ticker: str, days: int = 30) -> list[dict]:
                 'end_de': end_date,
                 'page_count': 10,
             }
-            response = await client.get('https://opendart.fss.or.kr/api/list.json', params=params)
+            response = client.get('https://opendart.fss.or.kr/api/list.json', params=params)
             data = response.json()
             if data.get('status') != '000':
                 raise ValueError(f"DART API error: {data.get('message')}")
