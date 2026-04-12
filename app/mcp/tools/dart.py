@@ -145,8 +145,8 @@ def get_financial_statements(ticker: str, year: str = None) -> list[dict]:
                 'crtfc_key': settings.DART_API_KEY,
                 'corp_code': corp_code,
                 'bsns_year': year,
-                'reprt_code': '11013',  # 1분기
-                'fs_div': 'CFS',  # 연결재무제표
+                'reprt_code': '11013',
+                'fs_div': 'CFS',
             }
             response = client.get('https://opendart.fss.or.kr/api/fnlttSinglAcnt.json', params=params)
             data = response.json()

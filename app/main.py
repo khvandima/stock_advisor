@@ -1,12 +1,17 @@
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import JSONResponse
-import asyncio
+
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+
+# Morning digest
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+from app.scheduler.morning_digest import run_morning_digest
 
 from app.api.routes import auth
 from app.api.routes import portfolio
@@ -46,7 +51,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             graph = build_graph(tools, checkpointer=checkpointer)
             app.state.graph = graph
             app.state.mcp_client = client
+            scheduler = AsyncIOScheduler(timezone="Asia/Seoul")
+            scheduler.add_job(run_morning_digest, CronTrigger(hour=9, minute=0))
+            scheduler.start()
             yield
+            scheduler.shutdown()
     logger.info("Stopping lifespan")
 
 
