@@ -5,9 +5,11 @@ __pycache__/
 .env
 .git/
 .gitignore
+.venv/
 tests/
 logs/
 uploads/
 *.md
 *.csv
 .pytest_cache/
+s
