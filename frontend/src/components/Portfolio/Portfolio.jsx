@@ -9,11 +9,13 @@ function Portfolio() {
     const [quantity, setQuantity] = useState('')
     const [purchasePrice, setPurchasePrice] = useState('')
     const [adding, setAdding] = useState(false)
+    const [prices, setPrices] = useState({})
 
     const fetchPortfolio = async () => {
         try {
             const res = await client.get('/portfolio/')
             setItems(res.data)
+            await fetchPrices(res.data)  // добавь эту строку
         } catch (e) {
             console.error(e)
         } finally {
@@ -53,6 +55,19 @@ function Portfolio() {
         } catch (e) {
             console.error(e)
         }
+    }
+
+    const fetchPrices = async (items) => {
+        const priceMap = {}
+        for (const item of items) {
+            try {
+                const res = await client.get(`/stocks/${item.ticker}`)
+                priceMap[item.ticker] = res.data.close
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        setPrices(priceMap)
     }
 
     if (loading) return <div className="text-gray-400 text-sm">Загрузка...</div>
@@ -108,6 +123,17 @@ function Portfolio() {
                                     <div className="text-gray-400 text-xs">
                                         {item.quantity} шт · ₩{item.purchase_price.toLocaleString()}
                                     </div>
+                                    {prices[item.ticker] && (() => {
+                                        const current = prices[item.ticker]
+                                        const pnl = (current - item.purchase_price) * item.quantity
+                                        const pnlPct = ((current - item.purchase_price) / item.purchase_price * 100).toFixed(1)
+                                        const isPositive = pnl >= 0
+                                        return (
+                                            <div className={`text-xs mt-1 ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                                                {isPositive ? '+' : ''}{pnl.toLocaleString()} ₩ ({isPositive ? '+' : ''}{pnlPct}%)
+                                            </div>
+                                        )
+                                    })()}
                                 </div>
                                 <button
                                     onClick={() => handleDelete(item.id, item.ticker)}
