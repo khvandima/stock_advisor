@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from app.db.session import AsyncSessionLocal
-from app.db.models import User, PortfolioItem, Digest
+from app.db.models import User, PortfolioItem, Digest, Alert
 
 from langchain_core.messages import HumanMessage
 
@@ -69,3 +69,29 @@ async def run_morning_digest():
             except Exception as e:
                 logger.error(f"Failed to generate digest for user {user.id}: {e}")
                 await session.rollback()
+
+
+async def check_alerts():
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Alert).where(Alert.is_active == True)
+        )
+        alerts = list(result.scalars().all())
+        for alert in alerts:
+            try:
+                price_data = get_stock_price(alert.ticker)
+                current_price = price_data['close']
+                triggered = (
+                        alert.condition == "above" and current_price >= alert.threshold or
+                        alert.condition == "below" and current_price <= alert.threshold
+                )
+                if triggered:
+                    alert.is_active = False
+                    content = f"Алерт сработал: {alert.ticker} цена {current_price} {alert.condition} {alert.threshold}"
+                    digest = Digest(user_id=alert.user_id, content=content)
+                    session.add(digest)
+                    await session.commit()
+                    logger.info(f"Alert triggered: {alert.ticker}")
+            except Exception as e:
+                logger.error(f"Failed to check alert {alert.id}: {e}")
+                continue

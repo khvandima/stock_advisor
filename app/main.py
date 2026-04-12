@@ -11,7 +11,7 @@ from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 # Morning digest
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from app.scheduler.morning_digest import run_morning_digest
+from app.scheduler.morning_digest import run_morning_digest, check_alerts
 
 from app.api.routes import auth
 from app.api.routes import portfolio
@@ -53,6 +53,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             app.state.mcp_client = client
             scheduler = AsyncIOScheduler(timezone="Asia/Seoul")
             scheduler.add_job(run_morning_digest, CronTrigger(hour=9, minute=0))
+            scheduler.add_job(check_alerts, CronTrigger(hour="9-15", minute="*/30", timezone="Asia/Seoul"))
             scheduler.start()
             yield
             scheduler.shutdown()
