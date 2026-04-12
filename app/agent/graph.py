@@ -62,7 +62,7 @@ Conversation:
 
         # Сжимаем если нужно
         messages = await _summarize_messages(state['messages'])
-        messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
+        messages = [SystemMessage(content=SYSTEM_PROMPT + f"\n\nCurrent user_id: {state['user_id']}")] + messages
 
         try:
             response = await invoke_with_retry(messages)

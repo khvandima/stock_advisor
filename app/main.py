@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
@@ -65,6 +66,14 @@ app = FastAPI(
     version="0.1.0",
     description="AI assistant for Korean stock market KOSPI/KOSDAQ",
     lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

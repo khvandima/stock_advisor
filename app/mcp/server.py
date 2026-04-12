@@ -4,6 +4,7 @@ from app.mcp.tools.krx_data import get_stock_price, get_stock_history
 from app.mcp.tools.signals import get_signal
 from app.mcp.tools.dart import get_dart_disclosures, get_financial_statements
 from app.mcp.tools.tavily_news import tavily_search
+from app.mcp.tools.portfolio import get_user_portfolio
 
 import sys
 
@@ -23,6 +24,7 @@ mcp.add_tool(get_signal)
 mcp.add_tool(get_dart_disclosures)
 mcp.add_tool(get_financial_statements)
 mcp.add_tool(tavily_search)
+mcp.add_tool(get_user_portfolio)
 
 
 if __name__ == "__main__":
